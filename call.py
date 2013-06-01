@@ -49,7 +49,7 @@ class MyAccountCallback(pj.AccountCallback):
 	
         call_cb = MyCallCallback(current_call)
         current_call.set_callback(call_cb)
-        current_call.answer(302, '', [("contact","rn:123456"))
+	current_call.answer(302, hdr_list=[("Contact","sip:rn=+12246591200")])
 
         
 # Callback to receive events from Call
@@ -63,7 +63,7 @@ class MyCallCallback(pj.CallCallback):
         print "Call with", self.call.info().remote_uri,
         print "is", self.call.info().state_text,
         print "last code =", self.call.info().last_code, 
-        print "(" + self.call.info().contact + ")"
+        print "(" + self.call.info().remote_contact + ")"
         
         if self.call.info().state == pj.CallState.DISCONNECTED:
             current_call = None
