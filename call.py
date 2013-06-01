@@ -49,7 +49,7 @@ class MyAccountCallback(pj.AccountCallback):
 	
         call_cb = MyCallCallback(current_call)
         current_call.set_callback(call_cb)
-        current_call.answer(302)
+        current_call.answer(302, '', [("contact","rn:123456"))
 
         
 # Callback to receive events from Call
