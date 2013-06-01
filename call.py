@@ -1,6 +1,4 @@
-# $Id$
-#
-# SIP call sample.
+# SIP 302 Redirect base off of SIP Call Sample
 #
 # Copyright (C) 2003-2008 Benny Prijono <benny@prijono.org>
 #
@@ -42,14 +40,11 @@ class MyAccountCallback(pj.AccountCallback):
             call.answer(486, "Busy")
             return
          
-        print "Incoming call from ", call.info().remote_uri
-        print "Press 'a' to answer"
-
         current_call = call
 	
         call_cb = MyCallCallback(current_call)
         current_call.set_callback(call_cb)
-	current_call.answer(302, hdr_list=[("Contact","sip:rn=+12246591200")])
+	current_call.answer(302, hdr_list=[("Contact", "rn=12246591200")])
 
         
 # Callback to receive events from Call
@@ -63,25 +58,20 @@ class MyCallCallback(pj.CallCallback):
         print "Call with", self.call.info().remote_uri,
         print "is", self.call.info().state_text,
         print "last code =", self.call.info().last_code, 
-        print "(" + self.call.info().remote_contact + ")"
+        print "(" + self.call.info().last_reason + ")"
+        
+	#Display contact information
+	print "Contact: ", self.call.info().contact
+	print "Remote Contact: ", self.call.info().remote_contact
         
         if self.call.info().state == pj.CallState.DISCONNECTED:
             current_call = None
             print 'Current call is', current_call
-
     # Notification when call's media state has changed.
 
-    '''
     def on_media_state(self):
-        if self.call.info().media_state == pj.MediaState.ACTIVE:
-            # Connect the call to sound device
-            call_slot = self.call.info().conf_slot
-            pj.Lib.instance().conf_connect(call_slot, 0)
-            pj.Lib.instance().conf_connect(0, call_slot)
-            print "Media is now active"
-        else:
             print "Media is inactive"
-'''
+
 # Function to make call
 def make_call(uri):
     try:
@@ -125,7 +115,7 @@ try:
     # Menu loop
     while True:
         print "My SIP URI is", my_sip_uri
-        print "Menu:  m=make call, h=hangup call, a=answer call, q=quit"
+        print "Menu:  m=make call, h=hangup call, q=quit"
 
         input = sys.stdin.readline().rstrip("\r\n")
         if input == "m":
@@ -145,12 +135,6 @@ try:
                 print "There is no call"
                 continue
             current_call.hangup()
-
-        elif input == "a":
-            if not current_call:
-                print "There is no call"
-                continue
-            current_call.answer(200)
 
         elif input == "q":
             break
